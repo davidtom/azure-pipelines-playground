@@ -10,24 +10,15 @@ container: ubuntu:16.04
 # [ push to registry ]
 # deploy
 
-stages:
-  - stage: Build
-    jobs:
-    - job: BuildJob
-      steps:
-      - bash: |
-        #!/bin/bash
-        vMajor=test
-  - stage: Test
-    jobs:
-    - job: TestOnWindows
-      steps:
-      - script: echo Testing on Windows!
-    - job: TestOnLinux
-      steps:
-      - script: echo Testing on Linux!
-  - stage: Deploy
-    jobs:
-    - job: Deploy
-      steps:
-      - script: echo Deploying the code!
+steps:
+  - bash: |
+      #!/bin/bash
+      vMajor=test
+    displayName: Set Var
+  - bash: |
+      #!/bin/bash
+      echo vMajor
+    displayName: Read Var
+  - script: echo Testing on Windows!
+  - script: echo Testing on Linux!
+  - script: echo Deploying the code!
