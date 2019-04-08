@@ -1,10 +1,11 @@
 variables:
-  poolName: 'ubuntu-16.04'
+  poolImage: 'ubuntu-16.04'
 
 jobs:
   - job: Build
     displayName: Build
-    pool: $(poolName)
+    pool:
+      vmImage: $(poolImage)
     # container: ubuntu:16.04
     steps:
     - bash: |
@@ -13,7 +14,8 @@ jobs:
       displayName: Set Var
   - job: Test
     displayName: Test
-    pool: $(poolName)
+    pool:
+      vmImage: $(poolImage)
     # container: ubuntu:16.04
     steps:
       - bash: |
