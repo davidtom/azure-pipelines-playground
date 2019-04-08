@@ -4,25 +4,41 @@
 # Run jobs in a container: https://docs.microsoft.com/en-us/azure/devops/pipelines/process/container-phases?view=azure-devops&tabs=yaml
 # container: ubuntu:16.04
 
-# STAGES(?):
-# build
-# test (tests & security scan)
-# [ push to registry ]
-# deploy
+trigger:
+- manual
 
-jobs:
-  - job: Build
-    displayName: Build
-    steps:
+# resources:
+#   - repo: self
+
+variables:
+  poolName: 'ubuntu-16.04'
+
+stages:
+- stage: Build
+  displayName: Build
+  jobs:
+    - job: Build
+      displayName: Build
+      pool: $(poolName)
+      steps:
       - bash: |
           #!/bin/bash
           vMajor=test
         displayName: Set Var
-  - job: Test
-    displayName: Test
-    steps:
-      - bash: |
-          #!/bin/bash
-          echo $vMajor
-          echo I tried
-        displayName: Read Var
+    - job: Test
+      displayName: Test
+      steps:
+        - bash: |
+            #!/bin/bash
+            echo $vMajor
+            echo I tried
+          displayName: Read Var
+- stage: Deploy
+  displayName: Deploy
+  dependsOn: Build
+  jobs:
+    - job: Deploy # could also use - deployment?
+      displayName: Deploy
+      pool: $(poolName)
+      steps:
+      - script: echo Made it here
