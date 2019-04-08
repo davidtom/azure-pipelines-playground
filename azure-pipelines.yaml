@@ -24,4 +24,5 @@ jobs:
       - bash: |
           #!/bin/bash
           echo $vMajor
+          echo I tried
         displayName: Read Var
