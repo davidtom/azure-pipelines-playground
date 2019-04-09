@@ -13,7 +13,7 @@ vMajor=${PACKAGE_ARRAY[0]}
 vMinor=${PACKAGE_ARRAY[1]}
 vPatch=${PACKAGE_ARRAY[2]}
 
-echo THIS_WONT=show up
+export THIS_WONT=show up
 
 echo "##vso[task.setvariable variable=vMajor]$vMajor"
 echo "##vso[task.setvariable variable=vMinor]$vMinor"

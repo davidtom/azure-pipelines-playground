@@ -16,6 +16,7 @@ steps:
     echo minor $(vMinor)
     echo patch ${VPATCH}
     echo $BUILD_REASON
+    echo show up? $THIS_WONT
     printenv
   displayName: Read Var Bash
 - bash: |
