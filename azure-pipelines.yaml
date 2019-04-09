@@ -26,7 +26,7 @@ steps:
     echo "##vso[task.setvariable variable=vMinor]$vMinor"
     echo "##vso[task.setvariable variable=vPatch]$vPatch"
 
-    echo $(vMajor) 
+    echo vMajor
     echo $(Build.Reason)
     # vMajor=test
     # echo "##vso[task.setvariable variable=(vMajor)]$vMajor"
@@ -34,7 +34,13 @@ steps:
 - bash: |
     #!/bin/bash
     echo major $(vMajor)
-  displayName: Read Var
+  displayName: Read Var Bash
+- task: PowerShell@2
+  inputs:
+    targetType: inline
+    script: |
+      echo major $(vMajor)
+  displayName: Read Var Powershell
 - bash: |
     #!/bin/bash
     echo Hello $(global)
