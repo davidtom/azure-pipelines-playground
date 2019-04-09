@@ -20,6 +20,6 @@ echo "##vso[task.setvariable variable=vPatch]$vPatch"
 printenv
 
 echo vMajor is: ${vMajor}
-echo vMajor is: $(vMajor)
-echo global: $(global)
-echo build reason is: $(Build.Reason)
+echo vMajor is: $vMajor
+echo global: $GLOBAL
+echo build reason is: $BUILD_REASON
