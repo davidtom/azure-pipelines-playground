@@ -1,0 +1,93 @@
+pool:
+  name: Hosted Ubuntu 1604
+  demands: npm
+
+#Your build pipeline references an undefined variable named ‘cat package.json \
+     | grep version \
+     | head -1 \
+     | awk -F: '{ print $2 }' \
+     | sed 's/[",]//g' \
+     | tr -d '[[:space:]]'’. Create or edit the build pipeline for this YAML file, define the variable on the Variables tab. See https://go.microsoft.com/fwlink/?linkid=865972
+#Your build pipeline references an undefined variable named ‘NPM-TOKEN’. Create or edit the build pipeline for this YAML file, define the variable on the Variables tab. See https://go.microsoft.com/fwlink/?linkid=865972
+#Your build pipeline references an undefined variable named ‘vMajor’. Create or edit the build pipeline for this YAML file, define the variable on the Variables tab. See https://go.microsoft.com/fwlink/?linkid=865972
+#Your build pipeline references an undefined variable named ‘vMinor’. Create or edit the build pipeline for this YAML file, define the variable on the Variables tab. See https://go.microsoft.com/fwlink/?linkid=865972
+#Your build pipeline references an undefined variable named ‘vPatch’. Create or edit the build pipeline for this YAML file, define the variable on the Variables tab. See https://go.microsoft.com/fwlink/?linkid=865972
+#Your build pipeline references an undefined variable named ‘VSTS-TWISTLOCK-USERNAME’. Create or edit the build pipeline for this YAML file, define the variable on the Variables tab. See https://go.microsoft.com/fwlink/?linkid=865972
+#Your build pipeline references an undefined variable named ‘VSTS-TWISTLOCK-PASSWORD’. Create or edit the build pipeline for this YAML file, define the variable on the Variables tab. See https://go.microsoft.com/fwlink/?linkid=865972
+#Your build pipeline references an undefined variable named ‘TWISTLOCK-CLI-URI’. Create or edit the build pipeline for this YAML file, define the variable on the Variables tab. See https://go.microsoft.com/fwlink/?linkid=865972
+#Your build pipeline references an undefined variable named ‘TWISTLOCK-CLI-URI’. Create or edit the build pipeline for this YAML file, define the variable on the Variables tab. See https://go.microsoft.com/fwlink/?linkid=865972
+#Your build pipeline references an undefined variable named ‘VSTS-TWISTLOCK-USERNAME’. Create or edit the build pipeline for this YAML file, define the variable on the Variables tab. See https://go.microsoft.com/fwlink/?linkid=865972
+#Your build pipeline references an undefined variable named ‘VSTS-TWISTLOCK-PASSWORD’. Create or edit the build pipeline for this YAML file, define the variable on the Variables tab. See https://go.microsoft.com/fwlink/?linkid=865972
+#Your build pipeline references an undefined variable named ‘vMajor’. Create or edit the build pipeline for this YAML file, define the variable on the Variables tab. See https://go.microsoft.com/fwlink/?linkid=865972
+#Your build pipeline references an undefined variable named ‘vMinor’. Create or edit the build pipeline for this YAML file, define the variable on the Variables tab. See https://go.microsoft.com/fwlink/?linkid=865972
+#Your build pipeline references an undefined variable named ‘vPatch’. Create or edit the build pipeline for this YAML file, define the variable on the Variables tab. See https://go.microsoft.com/fwlink/?linkid=865972
+
+steps:
+- bash: |
+   #!/bin/bash
+   
+   PACKAGE_VERSION=$(cat package.json \
+     | grep version \
+     | head -1 \
+     | awk -F: '{ print $2 }' \
+     | sed 's/[",]//g' \
+     | tr -d '[[:space:]]')
+   
+   IFS=. read -a PACKAGE_ARRAY <<< "$PACKAGE_VERSION"
+   
+   vMajor=${PACKAGE_ARRAY[0]}
+   vMinor=${PACKAGE_ARRAY[1]}
+   vPatch=${PACKAGE_ARRAY[2]}
+   
+   echo "##vso[task.setvariable variable=vMajor]$vMajor"
+   echo "##vso[task.setvariable variable=vMinor]$vMinor"
+   echo "##vso[task.setvariable variable=vPatch]$vPatch"
+   
+   echo $(Build.Reason)
+  displayName: 'Extract Package Version'
+
+- task: Npm@1
+  displayName: 'npm ci'
+  inputs:
+    command: custom
+    verbose: false
+    customCommand: ci
+    customEndpoint: 'KenSci NPM'
+
+- task: Npm@1
+  displayName: 'npm test'
+  inputs:
+    command: custom
+    verbose: false
+    customCommand: test
+
+- task: Docker@0
+  displayName: 'Build Image (branch & semver)'
+  inputs:
+    azureSubscription: 'Kentoso - Dev'
+    azureContainerRegistry: '{"loginServer":"kentoso.azurecr.io", "id" : "/subscriptions/83854e10-2dc7-47f1-bc44-560c2a2d42e4/resourceGroups/rg-kentoso/providers/Microsoft.ContainerRegistry/registries/kentoso"}'
+    buildArguments: 'NPM_TOKEN=$(NPM-TOKEN)'
+    imageName: '$(Build.Repository.Name):$(vMajor).$(vMinor).$(vPatch)'
+    additionalImageTags: '$(Build.SourceBranchName)'
+
+- bash: |
+   curl -u $(VSTS-TWISTLOCK-USERNAME):$(VSTS-TWISTLOCK-PASSWORD) -H 'Content-Type: application/json' -X GET -o twistcli -k $(TWISTLOCK-CLI-URI)/api/v1/util/twistcli
+   
+   chmod +x twistcli
+   
+   acr_repo=$(Build.Repository.Name)
+   acr_repo=${acr_repo,,}
+   
+   ./twistcli images scan --address $(TWISTLOCK-CLI-URI) -u $(VSTS-TWISTLOCK-USERNAME) -p $(VSTS-TWISTLOCK-PASSWORD) --vulnerability-threshold critical kentoso.azurecr.io/${acr_repo}:$(Build.SourceBranchName)
+  displayName: 'Twistlock CLI Scan'
+
+- task: Docker@0
+  displayName: 'Push Image (branch & semver)'
+  inputs:
+    azureSubscription: 'Kentoso - Dev'
+    azureContainerRegistry: '{"loginServer":"kentoso.azurecr.io", "id" : "/subscriptions/83854e10-2dc7-47f1-bc44-560c2a2d42e4/resourceGroups/rg-kentoso/providers/Microsoft.ContainerRegistry/registries/kentoso"}'
+    action: 'Push an image'
+    imageName: '$(Build.Repository.Name):$(vMajor).$(vMinor).$(vPatch)'
+    additionalImageTags: '$(Build.SourceBranchName)'
+  condition: and(succeeded(), ne(variables['Build.Reason'], 'PullRequest'))
+
