@@ -15,7 +15,7 @@ steps:
 - bash: |
     #!/bin/bash
     echo major $(vMajor)
-  displayName: Set Var
+  displayName: Read Var
 - bash: |
     #!/bin/bash
     echo Hello $(global)
