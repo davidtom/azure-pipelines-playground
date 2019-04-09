@@ -4,6 +4,7 @@ pool:
 container: ubuntu:16.04
 
 variables:
+  global: World
 
 steps:
 - bash: |
@@ -15,3 +16,7 @@ steps:
     #!/bin/bash
     echo major $(vMajor)
   displayName: Set Var
+- bash: |
+    #!/bin/bash
+    echo Hello $(global)
+  displayName: Hello World
