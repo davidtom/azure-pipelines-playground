@@ -19,3 +19,4 @@ echo "##vso[task.setvariable variable=vPatch]$vPatch"
 
 echo ${vMajor}
 echo ${Build.Reason}
+echo $(global)
