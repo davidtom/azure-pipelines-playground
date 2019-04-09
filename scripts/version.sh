@@ -17,9 +17,9 @@ export V_MAJOR=${PACKAGE_ARRAY[0]}
 export V_MINOR=${PACKAGE_ARRAY[1]}
 export V_PATCH=${PACKAGE_ARRAY[2]}
 
-# echo "##vso[task.setvariable variable=vMajor]$vMajor"
-# echo "##vso[task.setvariable variable=vMinor]$vMinor"
-# echo "##vso[task.setvariable variable=vPatch]$"Patch
+echo "##vso[task.setvariable variable=vMajor]$vMajor"
+echo "##vso[task.setvariable variable=vMinor]$vMinor"
+echo "##vso[task.setvariable variable=vPatch]$"Patch
 
 printenv
 
