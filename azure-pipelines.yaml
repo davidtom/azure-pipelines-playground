@@ -13,6 +13,8 @@ steps:
 - bash: |
     #!/bin/bash
     echo major $V_MAJOR
+    echo $BUILD_REASON
+    printenv
   displayName: Read Var Bash
 - bash: |
     #!/bin/bash
