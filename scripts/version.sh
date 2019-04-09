@@ -17,6 +17,8 @@ echo "##vso[task.setvariable variable=vMajor]$vMajor"
 echo "##vso[task.setvariable variable=vMinor]$vMinor"
 echo "##vso[task.setvariable variable=vPatch]$vPatch"
 
+printenv
+
 echo vMajor is (brackets): ${vMajor}
 echo vMajor is: $(vMajor)
 echo global: $(global)
