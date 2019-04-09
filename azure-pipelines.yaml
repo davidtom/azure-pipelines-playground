@@ -12,7 +12,9 @@ steps:
   displayName: Set Var
 - bash: |
     #!/bin/bash
-    echo major $V_MAJOR
+    echo major $vMajor
+    echo minor $(vMinor)
+    echo patch ${vPatch}
     echo $BUILD_REASON
     printenv
   displayName: Read Var Bash
