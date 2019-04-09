@@ -17,5 +17,5 @@ echo "##vso[task.setvariable variable=vMajor]$vMajor"
 echo "##vso[task.setvariable variable=vMinor]$vMinor"
 echo "##vso[task.setvariable variable=vPatch]$vPatch"
 
-echo $(vMajor)
-echo $(Build.Reason)
+echo ${vMajor}
+echo ${Build.Reason}
