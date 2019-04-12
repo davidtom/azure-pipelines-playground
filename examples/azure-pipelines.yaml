@@ -1,0 +1,32 @@
+pool:
+  vmImage: ubuntu-16.04
+
+# TODO: how easy is it to get an image from an acr repo?
+container: ubuntu:16.04
+
+variables:
+  global: World
+
+# TODO: how can I name this job?
+
+steps:
+- bash: ./scripts/version.sh
+  workingDirectory: $(Build.SourcesDirectory)
+  displayName: Set Var
+- bash: |
+    #!/bin/bash
+    echo major $VMAJOR
+    echo minor $(vMinor)
+    echo patch ${VPATCH}
+    echo $BUILD_REASON
+    echo show up? $THIS_WONT
+    printenv
+  displayName: Read Var Bash
+- bash: |
+    #!/bin/bash
+    echo test $TEST
+  displayName: Read Pipeline
+- bash: |
+    #!/bin/bash
+    echo Hello $GLOBAL
+  displayName: Hello World
