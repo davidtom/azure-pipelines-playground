@@ -13,15 +13,8 @@ vMajor=${PACKAGE_ARRAY[0]}
 vMinor=${PACKAGE_ARRAY[1]}
 vPatch=${PACKAGE_ARRAY[2]}
 
-export THIS_WONT=show up
-
 echo "##vso[task.setvariable variable=vMajor]$vMajor"
 echo "##vso[task.setvariable variable=vMinor]$vMinor"
 echo "##vso[task.setvariable variable=vPatch]$vPatch"
 
-printenv
-
-echo vMajor is: ${V_MAJOR}
-echo vPatch is: $vpatch
-echo global: $GLOBAL
-echo build reason is: $BUILD_REASON
+echo $BUILD_REASON
